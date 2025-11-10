@@ -67,16 +67,13 @@ p {
   grid-area: 2 / 10 / 10 / 13;
 }
 
-
 .regions-container {
   grid-area: 2 / 1 / 10 / 4;
 }
 .div3 {
   grid-area: 1 / 5 / 11 / 9;
 }
-.div4 {
-  grid-area: 3 / 5 / 9 / 9;
-}
+
 .logo {
   grid-area: 5 / 6 / 7 / 8;
   align-content: center;
@@ -105,6 +102,7 @@ p {
   background-size: 100% 200%;
   background-clip: text;
   background-position: 0% 100%;
+  opacity: 1;
 }
 
 .regions-header,
@@ -146,4 +144,30 @@ p {
 .locations-header > *,
 .regions-item > * {
   flex: 1;
+}
+
+.image-grid {
+  /* grid-area: 3 / 5 / 9 / 9; */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  z-index: 2;
+}
+
+.grid-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1em;
+}
+
+.img-container img {
+  clip-path: polygon(0 0, 100% 0, 100% 0%, 0 0%);
+  aspect-ratio: 1;
+  width: 100%;
+  object-fit: cover;
 }

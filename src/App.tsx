@@ -1,13 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { regions } from "./constants/regions";
+import { images } from "./assets";
+
+function getImageSet() {
+  const shuffled = [...images].sort(() => Math.random() - 0.5);
+  const sliced = shuffled.slice(0, 9);
+
+  const rows = [];
+
+  for (let i = 0; i < sliced.length; i += 3) {
+    rows.push(sliced.slice(i, i + 3));
+  }
+  return rows;
+}
 
 const App = () => {
   gsap.registerPlugin(useGSAP);
 
+  const [rows, setRows] = useState(getImageSet());
+
   useGSAP(() => {
     const overlayTimeline = gsap.timeline();
+    const imagesTimeline = gsap.timeline();
 
     overlayTimeline
       .to(".logo-line-1 h1", {
@@ -21,6 +37,18 @@ const App = () => {
           backgroundPosition: "0% 0%",
           duration: 0.5,
           ease: "none",
+          onComplete: () => {
+            imagesTimeline.to(".img-container img", {
+              clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0 100%)",
+              duration: 0.5,
+              ease: "power2.out",
+              onComplete: () => {
+                overlayTimeline.to(".logo h1", {
+                  opacity: 0,
+                });
+              },
+            });
+          },
         },
         ">"
       );
@@ -58,7 +86,7 @@ const App = () => {
         "<"
       );
 
-      overlayTimeline
+    overlayTimeline
       .to([".regions-header", ".regions-item"], {
         opacity: 0,
         duration: 0.075,
@@ -70,6 +98,7 @@ const App = () => {
           opacity: 0,
           duration: 0.075,
           stagger: 0.05,
+        //   onComplete
         },
         // start at same time as before
         "<"
@@ -105,6 +134,24 @@ const App = () => {
         {regions.map((region, i) => (
           <div key={i} className="locations-item">
             <p>{region.location}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* 3x3 */}
+      <div className="image-grid">
+        {rows.map((row, rowI) => (
+          <div className="grid-row" key={rowI}>
+            {row.map((img, i) => (
+              <div
+                key={i}
+                className={`img-container ${
+                  rowI === 1 && i === 1 ? "hero-img" : ""
+                }`}
+              >
+                <img src={img} />
+              </div>
+            ))}
           </div>
         ))}
       </div>
