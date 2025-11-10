@@ -117,6 +117,7 @@ p {
 .regions-item > *,
 .locations-item > * {
   color: var(--colors--grey);
+  font-weight: lighter;
 }
 
 .regions-header,
@@ -170,4 +171,9 @@ p {
   aspect-ratio: 1;
   width: 100%;
   object-fit: cover;
+  opacity: 1;
+}
+
+.hero-img{
+  display: block;
 }

@@ -17,6 +17,8 @@ import img16 from "./images/img16.jpg";
 import img17 from "./images/img17.jpg";
 import img18 from "./images/img18.jpg";
 
+export { img13 as hero };
+
 export const images = [
   img1,
   img2,

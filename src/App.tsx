@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { regions } from "./constants/regions";
-import { images } from "./assets";
+import { hero, images } from "./assets";
 
 function getImageSet() {
   const shuffled = [...images].sort(() => Math.random() - 0.5);
@@ -19,7 +19,33 @@ function getImageSet() {
 const App = () => {
   gsap.registerPlugin(useGSAP);
 
-  const [rows, setRows] = useState(getImageSet());
+  const [rows, setRows] = useState<string[][]>(getImageSet());
+
+  useEffect(() => {
+    console.log("rows", rows);
+  }, [rows]);
+
+  function startImgRotation() {
+    console.log("RUNNING");
+    const totalCycles = 30;
+    for (let cycle = 0; cycle < totalCycles; cycle++) {
+      const rows = getImageSet();
+      gsap.to(
+        {},
+        {
+          ease: "hop",
+          duration: 0,
+          delay: cycle * 0.1,
+          onComplete: () => {
+            if (cycle === totalCycles - 1) {
+              rows[1][1] = hero;
+            }
+            setRows(rows);
+          },
+        }
+      );
+    }
+  }
 
   useGSAP(() => {
     const overlayTimeline = gsap.timeline();
@@ -38,16 +64,38 @@ const App = () => {
           duration: 0.5,
           ease: "none",
           onComplete: () => {
-            imagesTimeline.to(".img-container img", {
-              clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0 100%)",
-              duration: 0.5,
-              ease: "power2.out",
-              onComplete: () => {
-                overlayTimeline.to(".logo h1", {
+            imagesTimeline
+              .to(".img-container img", {
+                clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0 100%)",
+                // duration: 0.5,
+                // stagger: 0.25,
+                ease: "power2.out",
+                onStart: () => {
+                  setTimeout(() => {
+                    startImgRotation();
+                  }, 1000);
+                },
+                onComplete: () => {
+                  imagesTimeline.to(".img-container img:not(.hero-img)", {
+                    clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0 0%)",
+                    ease: "power3.out",
+                    delay: 3.8,
+                  });
+
+                  imagesTimeline.to(".hero-img", {
+                    y: -50,
+                    duration: 1,
+                    ease: "hop",
+                  });
+                },
+              })
+              .to(
+                ".logo h1",
+                {
                   opacity: 0,
-                });
-              },
-            });
+                },
+                "<"
+              );
           },
         },
         ">"
@@ -98,7 +146,7 @@ const App = () => {
           opacity: 0,
           duration: 0.075,
           stagger: 0.05,
-        //   onComplete
+          //   onComplete
         },
         // start at same time as before
         "<"
